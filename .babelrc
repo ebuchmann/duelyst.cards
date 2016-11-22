@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "transform-async-to-generator",
+    "transform-exponentiation-operator"
+  ],
+  "presets": [
+    "node6"
+  ]
+}
