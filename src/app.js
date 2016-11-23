@@ -13,10 +13,9 @@ const app = new Koa()
 const Url = require(path.join(__dirname, 'models', 'Url.js'));
 const Counter = require(path.join(__dirname, 'models', 'Counter.js'));
 
-router.get('/', async function (ctx, next) {
-  const test = await Counter.findByIdAndUpdate({ _id: 'url_count'}, { $inc: { seq: 1 } }, { new: true });
-  const url = new Url({ _id: test.seq, hash: Math.random() });
-  await url.save()
+// Redirect anything to the regular site
+router.get('/', function (ctx) {
+  ctx.redirect(`${config.siteUrl}`);
 });
 
 // Redirects to the site
@@ -24,8 +23,8 @@ router.get('/:id', async function (ctx) {
   const url = await Url.findById(decode(ctx.params.id))
 
   url && url.hash
-    ? ctx.redirect(`http://localhost:8080/${url.hash}`)
-    : ctx.redirect(`http://localhost:8080/`)
+    ? ctx.redirect(`${config.siteUrl}/${url.hash}`)
+    : ctx.redirect(`${config.siteUrl}`)
   ctx.status = 301
 });
 
@@ -36,10 +35,10 @@ router.post('/save-deck', async function (ctx, next) {
   let id = null;
 
   // Try to find an existing hash instead of making a new entry
-  const existingId = await Url.find({ hash })
+  const existingId = await Url.findOne({ hash })
 
-  if (existingId.length) {
-    id = encode(existingId[0]._id)
+  if (existingId) {
+    id = encode(existingId._id)
   } else {
     // Get a new ID number
     const counter = await Counter.findByIdAndUpdate({ _id: 'url_count' }, { $inc: { seq: 1 } }, { new: true });
@@ -56,6 +55,5 @@ app.use(bodyParser());
 app.use(cors());
 app.use(router.routes());
 app.use(router.allowedMethods());
-
 
 app.listen(PORT, function () { console.log(`Listening on port: ${PORT}`); });
