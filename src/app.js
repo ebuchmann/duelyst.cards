@@ -30,7 +30,7 @@ router.get('/:id', async function (ctx) {
 
 // Accepts a hash and saves it to the DB
 // TODO: verify hash is valid
-router.post('/save-deck', async function (ctx, next) {
+router.post('/api/save-deck', async function (ctx, next) {
   const hash = ctx.request.body.hash;
   let id = null;
 

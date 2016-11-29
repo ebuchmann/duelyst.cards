@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "echo starting DEV MODE server -- not for production \\(press Ctrl-C to end\\) && babel-watch src/app.js",
-    "build": "rm -rf prod/* && babel src --out-dir dist --source-maps",
+    "build": "rm -rf dist/* && babel src --out-dir dist --source-maps",
     "test": "npm run build && mocha",
     "testonly": "mocha"
   },
