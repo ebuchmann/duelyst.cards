@@ -7,6 +7,7 @@ const db = require('./db')()
 const PORT = 3000
 import { encode, decode } from './utils/encoding.js'
 import cors from 'kcors'
+import atob from 'atob'
 
 const app = new Koa()
 
@@ -28,10 +29,22 @@ router.get('/:id', async function (ctx) {
   ctx.status = 301
 });
 
+function verifyHash (hash) {
+  // Verify the hash follows the format (1-3):(any numbers)
+  const reg = /^([1-3]:\d+(,|$))+?$/g
+  return !reg.test(atob(hash))
+}
+
 // Accepts a hash and saves it to the DB
-// TODO: verify hash is valid
 router.post('/api/save-deck', async function (ctx, next) {
   const hash = ctx.request.body.hash;
+
+  if (typeof hash !== 'string' || hash.length < 1 || hash[0] !== '#' || verifyHash(hash)) {
+    ctx.status = 422
+    ctx.body = 'Invalid hash'
+    return;
+  }
+
   let id = null;
 
   // Try to find an existing hash instead of making a new entry
@@ -52,7 +65,7 @@ router.post('/api/save-deck', async function (ctx, next) {
 });
 
 app.use(bodyParser());
-app.use(cors());
+app.use(cors({ origin: config.siteUrl }));
 app.use(router.routes());
 app.use(router.allowedMethods());
 
