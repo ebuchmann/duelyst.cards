@@ -74,7 +74,9 @@ app.use(convert(session()));
 app.use(convert(bodyParser()));
 
 // Cors
-app.use(convert(cors()));
+app.use(convert(cors({
+  credentials: true,
+})));
 // app.use(cors({ origin: config.siteUrl }));
 
 // Authentication
@@ -91,6 +93,11 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 (async () => {
-  await app.listen(PORT);
-  console.log(`App started, listening on port ${PORT}`);
+  try {
+    await app.listen(PORT);
+    console.log(`App started, listening on port ${PORT}`);
+  } catch (error) {
+    await app.listen(PORT);
+    console.log(`App crashed. Restarted on port ${PORT}`)
+  }
 })();

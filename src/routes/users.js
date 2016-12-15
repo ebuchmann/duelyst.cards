@@ -2,16 +2,23 @@ import { User } from '../models';
 
 const router = require('koa-router')();
 
-router.get('/api/user', async function (ctx, next) {
+router.get('/api/users', async function (ctx, next) {
 
 });
 
-router.post('/auth/user/new', async (ctx, next) => {
-  const { username, password } = ctx.request.body;
+router.post('/api/users/new', async (ctx, next) => {
+  const { username, password, email } = ctx.request.body;
 
-  if (await User.findOne({ username })) return;
+  if (await User.findOne({ $or: [ { username }, { email } ] })) {
+    ctx.status = 409;
+    return;
+  }
 
-  await new User({ username, password }).save();
+  const newUser = await new User({ username, password, email }).save();
+  delete newUser.password;
+
+  ctx.body = newUser;
+  ctx.status = 201;
 });
 
 module.exports = router;

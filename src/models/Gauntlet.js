@@ -15,9 +15,11 @@ const gauntletSchema = new Schema({
     endTime: Number,
   }],
   generalId: Number,
-  deck: Array,
+  deck: [Number],
   isActive: Boolean,
   user: ObjectId,
+}, {
+  timestamps: true,
 })
 
 module.exports = mongoose.model('Gauntlet', gauntletSchema);
