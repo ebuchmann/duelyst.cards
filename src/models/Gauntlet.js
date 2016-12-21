@@ -18,6 +18,8 @@ const gauntletSchema = new Schema({
   deck: [Number],
   isActive: Boolean,
   user: ObjectId,
+  gold: { type: Number, default: null },
+  spirit: { type: Number, default: null },
 }, {
   timestamps: true,
 })

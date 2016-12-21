@@ -1,4 +1,5 @@
 import passport from 'koa-passport';
+import argon2 from 'argon2';
 const router = require('koa-router')();
 
 router.post('/api/login', async (ctx, _next) => {
@@ -26,11 +27,6 @@ router.get('/api/get-account', async (ctx, _next) => {
 
   ctx.body = ctx.state.user;
   console.log(ctx.state.user)
-  ctx.status = 200;
-});
-
-router.get('/am-i-authenticated', async (ctx, _next) => {
-  ctx.body = ctx.isAuthenticated();
   ctx.status = 200;
 });
 
