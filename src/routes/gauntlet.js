@@ -13,7 +13,10 @@ router.get('/api/gauntlets/:username', async function(ctx, next) {
     return;
   }
 
-  const gauntlets = await Gauntlet.find({ user: user._id }).sort({ isActive: -1, updatedAt: -1 });
+  const page = Number(ctx.query.page) || 1;
+  const limit = Number(ctx.query.limit) || 5;
+
+  const gauntlets = await Gauntlet.paginate({ user: user._id }, { sort: { isActive: -1, updatedAt: -1 }, page, limit });
 
   ctx.body = gauntlets;
   ctx.status = 200;

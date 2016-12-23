@@ -1,4 +1,5 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -22,6 +23,8 @@ const gauntletSchema = new Schema({
   spirit: { type: Number, default: null },
 }, {
   timestamps: true,
-})
+});
+
+gauntletSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model('Gauntlet', gauntletSchema);

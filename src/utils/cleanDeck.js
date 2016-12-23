@@ -1,15 +1,16 @@
 /*
-  Remaps certain card ids (skins) to the base card id:
-
-  Saberspine tiger = 10012
-    Snow skin = 2010012
+  Remaps card IDs to the base. Numbers over a million are either skins or prismatics
+  1000501 -> 501
 */
 
 export const mapId = (cardId) => {
-  const numericalId = Number(cardId);
-  if (numericalId === 2010012) return 10012;
+  let card = cardId;
+  if (Number(cardId) > 1000000) {
+    const start = cardId.match(/(^[1-9]0+)/)[1];
+    card = cardId.substr(start.length);
+  }
 
-  return numericalId;
+  return Number(card);
 }
 
 /*

@@ -1,3 +1,6 @@
+/**
+ * Sends over a single gaunlet game
+ */
 (function() {
   const gameData = GamesManager.getInstance().playerGames.models[0].attributes;
 
@@ -20,8 +23,40 @@
   $.post('http://localhost:3000/api/save-gauntlet', postData);
 })()
 
-// #app-content-region
-// #app-arena
+/**
+ * Sends over a single ranked game
+ */
+(function() {
+  const gameData = GamesManager.getInstance().playerGames.models[0].attributes;
+
+  if (gameData.game_type !== 'ranked' && gameData.status !== 'over') return;
+
+  const postData = {
+    _id: gameData.game_id,
+    opponentUsername: gameData.opponent_username,
+    opponentGeneralId: gameData.opponent_general_id,
+    opponentFactionId: gameData.opponent_faction_id,
+    isDraw: gameData.is_draw,
+    isWinner: gameData.is_winner,
+    isPlayerOne: gameData.is_player_1,
+    startTime: gameData.created_at,
+    endTime: gameData.ended_at,
+    generalId: gameData.general_id,
+    factionId: gameData.faction_id,
+    cards: gameData.deck_cards,
+    rankBefore: gameData.rank_before,
+    rankDelta: gameData.rank_delta,
+    rankStarsBefore: gameData.rank_stars_before,
+    rankStarsDelta: gameData.rank_stars_delta,
+    apiKey: 'api_1481995591719_z9Wk1wD8xm59p9Q',
+  }
+
+  $.post('http://localhost:3000/api/save-match', postData);
+})()
+
+/**
+ * GAUNTLET TRACKER
+ */
 (function() {
   const sendDeck = function () {
     const gameData = GamesManager.getInstance().playerGames.models[0].attributes;

@@ -85,7 +85,7 @@ app.use(convert(passport.initialize()));
 app.use(convert(passport.session()));
 
 // Sets up routes
-['gauntlet', 'auth', 'users'].forEach((route) => {
+['gauntlet', 'auth', 'users', 'deck'].forEach((route) => {
   app.use(require(`./routes/${route}`).routes());
 });
 

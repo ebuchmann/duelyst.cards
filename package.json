@@ -36,6 +36,7 @@
     "koa-router": "^7.0.1",
     "lodash.isequal": "^4.4.0",
     "mongoose": "^4.6.8",
+    "mongoose-paginate": "^5.0.3",
     "passport-local": "^1.0.0",
     "validator": "^6.2.0"
   }
