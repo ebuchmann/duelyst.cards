@@ -26,7 +26,6 @@ router.get('/api/get-account', async (ctx, _next) => {
   }
 
   ctx.body = ctx.state.user;
-  console.log(ctx.state.user)
   ctx.status = 200;
 });
 

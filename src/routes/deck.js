@@ -21,8 +21,15 @@ router.get('/api/decks/:username', async function(ctx, next) {
 
 // Returns a single deck run based on the deck id
 router.get('/api/deck/:id', async function(ctx, next) {
-  ctx.body = await Deck.findById(ctx.params.id);
-  ctx.status = 200;
+  try {
+    const deck = await Deck.findById(ctx.params.id);
+    if (!deck) throw new Error('No deck found');
+
+    ctx.body = deck
+    ctx.status = 200;
+  } catch (error) {
+    ctx.status = 404;
+  }
 });
 
 /**
@@ -32,18 +39,18 @@ router.get('/api/deck/:id/stats', async function(ctx, next) {
   const matches = await Match.find({ deck_id: ctx.params.id });
 
   const stats = {
-    argeon: { wins: 0, losses: 0 },
-    ziran: { wins: 0, losses: 0 },
-    kaleos: { wins: 0, losses: 0 },
-    reva: { wins: 0, losses: 0 },
-    sajj: { wins: 0, losses: 0 },
-    zirix: { wins: 0, losses: 0 },
-    cassyva: { wins: 0, losses: 0 },
-    lilithe: { wins: 0, losses: 0 },
-    vaath: { wins: 0, losses: 0 },
-    starhorn: { wins: 0, losses: 0 },
-    faie: { wins: 0, losses: 0 },
-    kara: { wins: 0, losses: 0 },
+    argeon: { id: 1, faction: 'lyonar', wins: 0, losses: 0 },
+    ziran: { id: 23, faction: 'lyonar', wins: 0, losses: 0 },
+    kaleos: { id: 101, faction: 'songhai', wins: 0, losses: 0 },
+    reva: { id: 123, faction: 'songhai', wins: 0, losses: 0 },
+    zirix: { id: 201, faction: 'vetruvian', wins: 0, losses: 0 },
+    sajj: { id: 223, faction: 'vetruvian', wins: 0, losses: 0 },
+    lilithe: { id: 301, faction: 'abyssian', wins: 0, losses: 0 },
+    cassyva: { id: 323, faction: 'abyssian', wins: 0, losses: 0 },
+    vaath: { id: 401, faction: 'magmar', wins: 0, losses: 0 },
+    starhorn: { id: 418, faction: 'magmar', wins: 0, losses: 0 },
+    faie: { id: 501, faction: 'vanar', wins: 0, losses: 0 },
+    kara: { id: 527, faction: 'vanar', wins: 0, losses: 0 },
   };
 
   matches.forEach(match => {
@@ -70,8 +77,9 @@ router.get('/api/deck/:id/stats', async function(ctx, next) {
 
   for (let value in stats) {
     if (stats[value].losses === 0 && stats[value].wins === 0) {
-      stats[value].winPer = 0;
-      stats[value].lossPer = 0;
+      // stats[value].winPer = 0;
+      // stats[value].lossPer = 0;
+      delete stats[value]
     } else {
       stats[value].winPer = Number(((stats[value].wins / (stats[value].wins + stats[value].losses)) * 100).toFixed(2));
       stats[value].lossPer = Number(((stats[value].losses / (stats[value].wins + stats[value].losses)) * 100).toFixed(2));
@@ -82,9 +90,10 @@ router.get('/api/deck/:id/stats', async function(ctx, next) {
   ctx.status = 200;
 })
 
-// Used to save a new match / create a new gauntlet run
+/**
+ * Accepts match data, and either creates a new deck or match
+ */
 router.post('/api/save-match', async function (ctx, next) {
-  console.log('Receiving match data...');
   const body = ctx.request.body;
 
   const user = await User.findOne({ apiKey: body.apiKey });
@@ -96,7 +105,7 @@ router.post('/api/save-match', async function (ctx, next) {
 
   const cleanedDeck = body.cards.map(cardId => mapId(cardId));
   const deckString = cleanedDeck.sort().toString();
-  let matchingDeck = await Deck.findOne({ deckString });
+  let matchingDeck = await Deck.findOne({ user_id: user._id, deckString });
 
   if (!matchingDeck) {
     matchingDeck = await new Deck({
@@ -127,9 +136,15 @@ router.post('/api/save-match', async function (ctx, next) {
       rankStarsBefore: body.rankStarsBefore,
       rankStarsDelta: body.rankStarsDelta,
     }).save();
+
+    if (body.isWinner === 'true' && body.isDraw === 'false') {
+      await Deck.findByIdAndUpdate({ _id: matchingDeck._id }, { $inc: { wins: 1 } });
+    } else if (body.isWinner === 'false' && body.isDraw === 'false') {
+      await Deck.findByIdAndUpdate({ _id: matchingDeck._id }, { $inc: { losses: 1 } });
+    }
   }
 
-  console.log(ctx.body);
+  ctx.body = 'Update successful';
   ctx.status = 200;
 });
 

@@ -29,7 +29,7 @@
 (function() {
   const gameData = GamesManager.getInstance().playerGames.models[0].attributes;
 
-  if (gameData.game_type !== 'ranked' && gameData.status !== 'over') return;
+  if (gameData.game_type !== 'ranked' || gameData.status !== 'over') return;
 
   const postData = {
     _id: gameData.game_id,

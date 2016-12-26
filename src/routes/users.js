@@ -27,4 +27,19 @@ router.post('/api/users/new', async (ctx, next) => {
   ctx.status = 201;
 });
 
+router.post('/api/users/reset-api-key', async (ctx, next) => {
+  if (!ctx.isAuthenticated()) {
+    ctx.status = 401;
+    return;
+  }
+  
+  const { user } = ctx.state.user;
+  const apiKey = generateApiKey()
+
+  await User.findByIdAndUpdate({ _id: user._id }, { apiKey });
+
+  ctx.body = apiKey;
+  ctx.status = 200;
+})
+
 module.exports = router;

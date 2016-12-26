@@ -6,7 +6,6 @@ module.exports = function db() {
   const connection = mongoose.connection
 
   mongoose.Promise = global.Promise
-  // assert.equal(query.exec().constructor, global.Promise)
 
   connection.on('connected', () => {
     console.log('database connected');

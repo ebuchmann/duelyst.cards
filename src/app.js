@@ -11,6 +11,7 @@ import atob from 'atob'
 import passport from 'koa-passport';
 import convert from 'koa-convert';
 import session from 'koa-generic-session';
+import send from 'koa-send';
 
 const app = new Koa();
 
@@ -64,6 +65,13 @@ router.post('/api/save-deck', async function (ctx, next) {
   }
 
   ctx.body = { id }
+});
+
+/**
+ * For sending of files inside the public folder only
+ */
+router.get('/public/:filename', async function (ctx, next) {
+  await send(ctx, ctx.params.filename, { root: __dirname + '/public' });
 });
 
 // Sessions
