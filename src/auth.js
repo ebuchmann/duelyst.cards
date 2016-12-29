@@ -1,4 +1,3 @@
-import co from 'co';
 import argon2 from 'argon2';
 import { User } from './models';
 
@@ -21,24 +20,30 @@ passport.deserializeUser(async (id, done) => {
  */
 
 const LocalStrategy = require('passport-local').Strategy;
-passport.use(new LocalStrategy((username, password, done) => {
-  return co(function* () {
-    try {
-      const user = yield User.findOne({ username }).select('_id username password email apiKey');
+passport.use(new LocalStrategy(async (username, password, done) => {
+  try {
+    const user = await User.findOne({ username }).select('_id username password email apiKey');
 
-      if (!user) done(null, false);
+    if (!user) done(null, false);
 
-      const match = yield argon2.verify(user.password, password);
+    const match = await argon2.verify(user.password, password);
 
-      if (user && match) {
-        const newUser = user.toObject();
-        delete newUser.password;
-        done(null, newUser);
-      } else {
-        done(null, false);
-      }
-    } catch (error) {
-      done(error);
+    if (user && match) {
+      const newUser = user.toObject();
+      delete newUser.password;
+      done(null, newUser);
+    } else {
+      done(null, false);
     }
-  });
+  } catch (error) {
+    done(error);
+  }
 }));
+
+/**
+ * Authentication middleware
+ */
+export const isAuthenticated = async function(ctx, next) {
+  if (!ctx.isAuthenticated()) { return ctx.status = 403; }
+  return await next();
+};

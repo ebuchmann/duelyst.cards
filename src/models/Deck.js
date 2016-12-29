@@ -10,6 +10,7 @@ const deckSchema = new Schema({
   name: String,
   cards: [Number],
   deckString: String,
+  deckHash: { type: String, index: true },
   wins: { type: Number, default: 0 },
   losses: { type: Number, default: 0 },
 }, {

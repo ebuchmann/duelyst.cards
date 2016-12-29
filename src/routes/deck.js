@@ -1,6 +1,8 @@
 import isequal from 'lodash.isequal';
+import md5 from 'md5';
 import { Deck, Match, User } from '../models';
 import { mapId, remapGenerals, cleanMatch } from '../utils/cleanDeck';
+import { isAuthenticated } from '../auth';
 
 const router = require('koa-router')();
 
@@ -13,7 +15,7 @@ router.get('/api/decks/:username', async function(ctx, next) {
     return;
   }
 
-  const decks = await Deck.find({ user_id: user._id }).sort({ updatedAt: -1 }).select('-cards -deckString');
+  const decks = await Deck.find({ user_id: user._id }).sort({ updatedAt: -1 }).select('-cards -deckHash');
 
   ctx.body = decks;
   ctx.status = 200;
@@ -104,14 +106,14 @@ router.post('/api/save-match', async function (ctx, next) {
   }
 
   const cleanedDeck = body.cards.map(cardId => mapId(cardId));
-  const deckString = cleanedDeck.sort().toString();
-  let matchingDeck = await Deck.findOne({ user_id: user._id, deckString });
+  const deckHash = md5(cleanedDeck.sort().toString());
+  let matchingDeck = await Deck.findOne({ user_id: user._id, deckHash });
 
   if (!matchingDeck) {
     matchingDeck = await new Deck({
       user_id: user._id,
       generalId: mapId(body.generalId),
-      deckString,
+      deckHash,
       cards: cleanedDeck
     }).save();
   }
@@ -147,5 +149,24 @@ router.post('/api/save-match', async function (ctx, next) {
   ctx.body = 'Update successful';
   ctx.status = 200;
 });
+
+/**
+ * Deletes a deck and associated matches
+ */
+router.delete('/api/deck/:deckId', isAuthenticated, async (ctx, next) => {
+  const { user } = ctx.state.user;
+  const deck = await Deck.findOne({ _id: ctx.params.deckId, user_id: user._id });
+
+  if (!deck) {
+    ctx.status = 404;
+    return;
+  }
+
+  await Match.remove({ deck_id: deck._id });
+  await deck.remove();
+
+  ctx.status = 200;
+});
+
 
 module.exports = router;
