@@ -11,6 +11,7 @@ import atob from 'atob'
 import passport from 'koa-passport';
 import convert from 'koa-convert';
 import session from 'koa-generic-session';
+import MongoStore from 'koa-generic-session-mongo';
 import send from 'koa-send';
 
 const app = new Koa();
@@ -76,7 +77,11 @@ router.get('/public/:filename', async function (ctx, next) {
 
 // Sessions
 app.keys = ['my-cat-meows-a-lot'];
-app.use(convert(session()));
+app.use(convert(session({
+  store: new MongoStore({
+    url: config.mongodb.string,
+  }),
+})));
 
 // Body Parser
 app.use(convert(bodyParser()));
