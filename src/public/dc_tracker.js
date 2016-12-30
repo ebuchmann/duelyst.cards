@@ -25,7 +25,7 @@
     }
 
     showNotification('Syncing with duelystcards.com');
-    $.post('http://localhost:3000/api/save-match', postData).then((res) => {
+    $.post('https://duelyst.cards/api/save-match', postData).then((res) => {
       showNotification('Syncing successful');
       $('#dc_notification').html(res)
       setTimeout(() => {

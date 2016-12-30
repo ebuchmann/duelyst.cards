@@ -10,6 +10,8 @@ const userSchema = new Schema({
   apiKey: String,
   email: { type: String, validate: [ isEmail, 'invalid email' ] },
   viewAds: { type: Boolean, default: false },
+}, {
+  timestamps: true,
 });
 
 module.exports = mongoose.model('User', userSchema);

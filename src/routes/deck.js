@@ -157,12 +157,8 @@ router.delete('/api/deck/:deckId', isAuthenticated, async (ctx, next) => {
   const { user } = ctx.state.user;
   const deck = await Deck.findOne({ _id: ctx.params.deckId, user_id: user._id });
 
-  if (!deck) {
-    ctx.status = 404;
-    return;
-  }
+  if (!deck) throw new Error('Deck not found');
 
-  await Match.remove({ deck_id: deck._id });
   await deck.remove();
 
   ctx.status = 200;

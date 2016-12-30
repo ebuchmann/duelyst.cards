@@ -16,6 +16,16 @@ import send from 'koa-send';
 
 const app = new Koa();
 
+// Catch all error handling
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    ctx.body = { message: err.message };
+    ctx.status = err.status || 500;
+  }
+});
+
 import { Url, Counter } from './models';
 
 // Redirect anything to the regular site
@@ -90,7 +100,6 @@ app.use(convert(bodyParser()));
 app.use(convert(cors({
   credentials: true,
 })));
-// app.use(cors({ origin: config.siteUrl }));
 
 // Authentication
 require('./auth');

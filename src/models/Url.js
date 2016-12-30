@@ -6,7 +6,8 @@ const ObjectId = Schema.ObjectId;
 const urlSchema = new Schema({
   _id: { type: String, index: true },
   hash: String,
-  'created_at': { type: Date, default: Date.now },
-})
+}, {
+  timestamps: true,
+});
 
 module.exports = mongoose.model('Url', urlSchema);
