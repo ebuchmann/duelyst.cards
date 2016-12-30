@@ -52,9 +52,17 @@
   const notification = document.createElement('div');
   notification.setAttribute('id', 'dc_notification');
   notification.style.zIndex = 100;
-  notification.style.backgroundColor = 'red';
+  notification.style.backgroundColor = 'rgba(255, 255, 255, .7)';
   notification.style.position = 'absolute';
   notification.style.display = 'none';
+  notification.style.top = '20px';
+  notification.style.width = '200px';
+  notification.style.left = 0;
+  notification.style.right = 0;
+  notification.style.padding = '10px';
+  notification.style.borderRadius = '25px';
+  notification.style.textAlign = 'center';
+  notification.style.margin = '0 auto';
   setTimeout(() => {
     document.querySelector('body').appendChild(notification);
   }, 5000);
