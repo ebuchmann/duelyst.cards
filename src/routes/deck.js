@@ -164,5 +164,18 @@ router.delete('/api/deck/:deckId', isAuthenticated, async (ctx, next) => {
   ctx.status = 200;
 });
 
+/**
+ * Updates deck data
+ */
+router.patch('/api/deck/:deckId', isAuthenticated, async (ctx, next) => {
+  const body = ctx.request.body;
+  const { user } = ctx.state.user;
+
+  ctx.body = await Deck.findOneAndUpdate(
+    { _id: ctx.params.deckId, user_id: user._id},
+    { $set: { name: body.name }},
+    { new: true });
+  ctx.status = 200;
+});
 
 module.exports = router;
