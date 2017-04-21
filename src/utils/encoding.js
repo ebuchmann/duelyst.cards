@@ -1,3 +1,5 @@
+import atob from 'atob';
+
 const alphabet = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
 const base = alphabet.length;
 

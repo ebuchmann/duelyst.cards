@@ -1,13 +1,12 @@
 import Koa from 'koa';
-import config from 'config'
-import path from 'path'
-import bodyParser from 'koa-bodyparser'
-const router = require('koa-router')()
-const db = require('./db')()
-const PORT = 3000
-import { encode, decode, verifyHash } from './utils/encoding.js'
-import cors from 'kcors'
-import atob from 'atob'
+import config from 'config';
+import path from 'path';
+import bodyParser from 'koa-bodyparser';
+const router = require('koa-router')();
+const db = require('./db')();
+const PORT = 3000;
+import { encode, decode, verifyHash } from './utils/encoding.js';
+import cors from 'kcors';
 import passport from 'koa-passport';
 import convert from 'koa-convert';
 import session from 'koa-generic-session';
