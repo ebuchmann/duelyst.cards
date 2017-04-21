@@ -9,7 +9,7 @@ export const encode = (num) => {
     encoded = alphabet[remainder].toString() + encoded;
   }
   return encoded;
-}
+};
 
 export const decode = (str) => {
   let decoded = 0;
@@ -20,4 +20,10 @@ export const decode = (str) => {
     str = str.substring(1);
   }
   return decoded;
-}
+};
+
+// Verify the hash follows the format (1-3):deckSegment:(any numbers)
+export const verifyHash = (hash) => {
+  const reg = /^([1-3]:(general|mainboard|sideboard):\d+(,|$))+?$/g
+  return reg.test(atob(hash))
+};

@@ -7,9 +7,12 @@
   "scripts": {
     "dev": "babel-watch src/app.js",
     "build": "rm -rf dist/* && babel src --out-dir dist --source-maps",
-    "test": "npm run build && mocha",
-    "testonly": "mocha",
+    "test": "npm run build && jest",
+    "testonly": "jest",
     "prod": "pm2 start ecosystem.config.js --env production"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["in-game-tests.js"]
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -19,7 +22,7 @@
     "babel-preset-node6": "^11.0.0",
     "babel-watch": "^2.0.3",
     "eslint": "^3.9.1",
-    "mocha": "^3.1.2"
+    "jest": "^19.0.2"
   },
   "dependencies": {
     "argon2": "^0.14.1",

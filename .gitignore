@@ -1,7 +1,8 @@
 /node_modules/
 /dist/
-
+yarn.lock
 
 # Config files
 /config/development.js
 /config/production.js
+development.js
