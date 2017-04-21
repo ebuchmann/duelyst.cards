@@ -1,13 +1,12 @@
 import Koa from 'koa';
-import config from 'config'
-import path from 'path'
-import bodyParser from 'koa-bodyparser'
-const router = require('koa-router')()
-const db = require('./db')()
-const PORT = 3000
-import { encode, decode } from './utils/encoding.js'
-import cors from 'kcors'
-import atob from 'atob'
+import config from 'config';
+import path from 'path';
+import bodyParser from 'koa-bodyparser';
+const router = require('koa-router')();
+const db = require('./db')();
+const PORT = 3000;
+import { encode, decode, verifyHash } from './utils/encoding.js';
+import cors from 'kcors';
 import passport from 'koa-passport';
 import convert from 'koa-convert';
 import session from 'koa-generic-session';
@@ -43,17 +42,11 @@ router.get('/:id', async function (ctx) {
   ctx.status = 301
 });
 
-// Verify the hash follows the format (1-3):(any numbers)
-function verifyHash (hash) {
-  const reg = /^([1-3]:\d+(,|$))+?$/g
-  return !reg.test(atob(hash))
-}
-
 // Accepts a hash and saves it to the DB
 router.post('/api/save-deck', async function (ctx, next) {
   const hash = ctx.request.body.hash;
 
-  if (typeof hash !== 'string' || hash.length < 1 || hash[0] !== '#' || verifyHash(hash)) {
+  if (typeof hash !== 'string' || hash.length < 1 || hash[0] !== '#' || !verifyHash(hash)) {
     ctx.status = 422
     ctx.body = 'Invalid hash'
     return;
